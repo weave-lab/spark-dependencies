@@ -8,6 +8,27 @@ but other days can be explicitly specified.
 
 This repository is based on [zipkin-dependencies](https://github.com/openzipkin/zipkin-dependencies).
 
+## Running Job Locally in IntelliJ
+ 
+1. Install Latest Java 8 SDK
+2. Make sure SDK is set in `File -> Project Structure`
+  ![img_2.png](img_2.png)
+3. Add TLS Cert to keystore.jks (cert may already be included)
+    1. Port Forward to Elastic Search Instance :`kubectl --context [context] -n tracing get secrets tracing-es-elastic-user -o json | jq -r '.data.elastic' | base64 -d && echo`
+    2. Download Certificate : `certigo connect localhost:9200 -j | jq -r '.certificates[0].pem' >> es.cert`
+    3. Add Certificate (password is: `password` ) : `keytool -importcert -file es.cert -keystore keystore.jks -alias "ES-CERT-FOO"`
+7. Get the Elastic Search (ES) password
+`kubectl --context [context] -n tracing get secrets tracing-es-elastic-user -o json | jq -r '.data.elastic' | base64 -d && echo`
+8. Add ES Password to Run Config
+    1. Open Run Config Here and Click `Open Run/Debug Configurations`
+       ![img.png](img.png)
+    2. Set ES_PASSWORD
+       ![img_1.png](img_1.png)
+10. Port-Forward to ES : `kubectl --context [context] -n tracing port-forward svc/tracing-es-http 9200:9200`
+11. Run or Debug Job
+
+![img_3.png](img_3.png)
+    
 ## Quick-start
 Spark job can be run as docker container and also as java executable:
 
